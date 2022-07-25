@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {fork} = require('child_process');
-const Random = require('../js/randoms');
-const random = new Random();
+const random = require('../controllers/randoms');
 
 router.get('/',(req, res) => {
     if(!isNaN(req.query.cant) || !req.query.cant){

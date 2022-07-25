@@ -8,20 +8,12 @@ const cpus = require('os').cpus().length;
 const cluster = require('cluster');
 const PORT = process.env.PORT || 8080;
 
-// importacion e instancia de la clase Chat
-const Chat = require('./js/chat');
-const chat = new Chat();
-
-// importacion e instancia de la clase Productos
-const Productos = require('./js/productos');
-const productos = new Productos();
+// importacion de los servicio chat y productos
+const chat = require('./services/chat');
+const productos = require('./services/productos');
 
 // importacion de routers
-const loginRouter = require('./routes/loginRouter');
-const indexRouter = require('./routes/indexRouter');
-const registerRouter = require('./routes/registerRouter');
-const infoRouter = require('./routes/infoRouter');
-const randomsRouter = require('./routes/randomsRouter');
+const router = require('./routes/router');
 
 // Inicializar express, http y socket.io
 const app = express();
@@ -33,11 +25,7 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 app.set('view engine','ejs');
 app.use(express.static("public"));
-app.use('/login',loginRouter);
-app.use('/',indexRouter);
-app.use('/register',registerRouter);
-app.use('/info',infoRouter);
-app.use('/api/randoms',randomsRouter);
+app.use('/',router);
 
 // sockets
 io.on('connection',async (socket) => {
@@ -45,8 +33,23 @@ io.on('connection',async (socket) => {
     //mensaje de usuario conectado
     console.log('Usuario conectado'); 
 
-    // socket para productos con faker
-    socket.emit('productosFaker',productos.RandomProducts());
+    // socket para productos
+    socket.on('guardar', async data => {
+        try{
+            console.log(data);
+            const products = await productos.readProducts();
+            io.sockets.emit('historialGuardar',products);
+        }catch(e){
+            console.log(`Ha ocurrido el siguiente error: ${e}`);
+        }
+    });
+
+    try{
+        const products = await productos.readProducts();
+            socket.emit('historialProductos',products);
+    }catch (e){
+        console.log(`Ha ocurrido el siguiente error: ${e}`);
+    }
 
     //socket para chat
     socket.on('nuevoMensaje',async data => {
@@ -83,3 +86,5 @@ if(args.modo === 'CLUSTER' && cluster.isPrimary){
     });   
     console.log(`worker ${process.pid} is running`);
 }
+
+module.exports = httpserver;

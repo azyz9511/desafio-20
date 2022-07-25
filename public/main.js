@@ -1,27 +1,64 @@
 const socket = io.connect();
 
-// tabla productos faker
+// tabla productos
 // ---------------------------------------------------------------------------------------------------------------------------------------
 
-socket.on('productosFaker', data => {
-    render(data);
+const formProductos = document.getElementById('formulario');
+formProductos.addEventListener('submit',(e) => {
+    e.preventDefault();
+
+    const datos = {
+        'id': formProductos[0].value,
+        'title': formProductos[1].value,
+        'price': formProductos[2].value,
+        'thumbnail': formProductos[3].value
+    }
+    
+    fetch('/productos', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(datos)
+    })
+
+     setTimeout(() => socket.emit('guardar','guardado con exito'),500);
+            socket.on('historialGuardar', data => {
+                    render(data)
+            });
+
+    formProductos.reset();
+
 });
 
 function render(data) {
-    const table = `<tr><th><h5>Nombre</h5></th><th><h5>Precio</h5></th><th><h5>Foto</h5></th></tr>`;
-    const html = data
-    .map((elem, index) => {
-        return `<tr>
-        <td>${elem.nombre}</td>
-        <td>${elem.precio}</td>
-        <td><img width="50" src="${elem.foto}"></td>
-        </tr>`
-    })
-    .join(' ');
-    const tableComplete = table + html;
-    document.getElementById('productos').innerHTML = tableComplete;
-    
+    if(data.length !== 0){
+        const table = `<tr><th><h5>Nombre</h5></th><th><h5>Precio</h5></th><th><h5>Foto</h5></th></tr>`;
+        const html = data
+        .map((elem, index) => {
+            return `<tr>
+            <td>${elem.title}</td>
+            <td>${elem.price}</td>
+            <td><img width="50" src="${elem.thumbnail}"></td>
+            </tr>`
+        })
+        .join(' ');
+        const tableComplete = table + html;
+        document.getElementById('productos').innerHTML = tableComplete;
+    }else{
+        const noProducts = `<tr>
+                                <td>
+                                    <h3 class="text-danger"> No se encontraron productos </h3>
+                                </td>
+                            </tr>`;
+        document.getElementById('productos').innerHTML = noProducts;
+    }
 }
+
+socket.on('historialProductos', data => {
+    render(data)
+});
 
 // chat
 // -----------------------------------------------------------------------------------------------------------------------------------------

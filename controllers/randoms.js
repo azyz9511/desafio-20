@@ -46,4 +46,6 @@ class Random{
 
 }
 
-module.exports = Random;
+const random = new Random();
+
+module.exports = random;
