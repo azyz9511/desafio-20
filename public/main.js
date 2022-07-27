@@ -87,7 +87,7 @@ formChat.addEventListener('submit',(e) => {
         const html = data
         .map((elem, index) => {
             return `<div>
-            <b style='color:blue;'>${elem.author.id}</b>
+            <b style='color:blue;'>${elem.id}</b>
             <span style='color:brown'>[${elem.fyh}] : </span>
             <i style='color:green'>${elem.text}</i>
             </div>`
@@ -103,7 +103,7 @@ socket.on('historialChat', data => {
         const html = data
         .map((elem, index) => {
             return `<div>
-            <b style='color:blue;'>${elem.author.id}</b>
+            <b style='color:blue;'>${elem.id}</b>
             <span style='color:brown'>[${elem.fyh}] : </span>
             <i style='color:green'>${elem.text}</i>
             </div>`

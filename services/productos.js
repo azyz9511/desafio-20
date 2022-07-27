@@ -1,9 +1,10 @@
-const productosDB = require('../database/productos');
+const productosDao = require('../database/DAO/productos');
+const ProductoDto = require('../database/DTO/productos');
 
 const productos = {
     addProduct: async (producto) => {
             try{
-                await productosDB.addNewProduct(producto);
+                await productosDao.addNewProduct(producto);
                 console.log('Producto agregado con exito');
             }catch (e){
                 console.log(`Ha ocurrido el siguiente error: ${e}`);
@@ -11,11 +12,14 @@ const productos = {
         },
     readProducts: async () => {
             try{
-                const data = await productosDB.getAllProducts();
-                return data;
+                const data = await productosDao.getAllProducts();
+                const datos = data.map( elemento => {
+                    const dto = new ProductoDto(elemento);
+                    return dto;
+                })
+                return datos;
             }catch (e){
-                console.log(`aqui esta el problema: ${e}`);
-                // console.log(`Ha ocurrido el siguiente error: ${e}`);
+                console.log(`Ha ocurrido el siguiente error: ${e}`);
             }
         }
 }

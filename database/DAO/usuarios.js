@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const usuarioSchema = require('./models/usuarioSchema');
+const usuarioSchema = require('../models/usuarioSchema');
 require('dotenv').config();
 
 class Usuario{

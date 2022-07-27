@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const productoSchema = require('./models/productoSchema');
+const mensajeSchema = require('../models/mensajeSchema');
 require('dotenv').config();
 
-class Producto{
+class Chat{
     
     constructor(){
         
@@ -20,35 +20,29 @@ class Producto{
         }
     }
     
-    async addNewProduct(producto){
+    async addNewMessage(mensaje){
         try{
             await this.connectDB();
-            let lastId = await productoSchema.find().sort({id:-1}).limit(1);
-            if(lastId.length !== 0){
-                producto.id = lastId[0].id + 1;
-            }else{
-                producto.id = 1;
-            }
-            await productoSchema.create(producto);
+            await mensajeSchema.create(mensaje);
             mongoose.disconnect();
         }catch (e){
             console.log(`Ha ocurrido el siguiente error: ${e}`);
         }
     }
-
-    async getAllProducts(){
+    
+    async getAllMessages(){
         try{
             await this.connectDB();
-            const data = await productoSchema.find();
+            const data = await mensajeSchema.find();
             mongoose.disconnect();
             return data;
         }catch (e){
-            return `Ha ocurrido el siguiente error: ${e}`;
+            console.log(`Ha ocurrido el siguiente error: ${e}`);
         }
     }
 
 }
 
-const productosDB = new Producto();
+const chatDB = new Chat();
 
-module.exports = productosDB;
+module.exports = chatDB;
